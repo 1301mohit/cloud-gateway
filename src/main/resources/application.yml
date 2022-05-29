@@ -4,6 +4,15 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment/** 
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: payment-service
+                fallbackuri: forward:/paymentFallBack
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
@@ -13,15 +22,6 @@ spring:
               args:
                 name: order-service
                 fallbackuri: forward:/orderFallBack
-        - id: payment-service
-          uri: lb://PAYMENT-SERVICE
-          predicates:
-            - Path=/payment/** 
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: payment-service
-                fallbackuri: forward:/paymentFallback
     
 eureka:
   instance:
